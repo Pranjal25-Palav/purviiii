@@ -1,0 +1,596 @@
+<title>Birthday Tide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400&display=swap">
+<style>
+/* Layout: one sunset beach. Centered script heading and a glass card with the countdown over the sky,
+   a half-set sun on the horizon, sea with a light reflection, lanterns rising from behind the sand,
+   foam lapping the shore, palms swaying on dunes at both edges, a few birds crossing the sky. */
+:root {
+  --night: #0d1544;
+  --dusk: #28286e;
+  --violet: #67398a;
+  --rose: #c0507c;
+  --coral: #ff8b66;
+  --honey: #ffcf88;
+  --gold: #ffc766;
+  --cream: #ffe3b0;
+  --haze: #e0d6f2;
+  --teal: #1d7384;
+  --deep: #0a2f4a;
+  --sand: #f3d4a0;
+  --sand2: #d3a171;
+  --palm: #12082a;
+  --sea: 230px;
+  --script: 'Pinyon Script', 'Snell Roundhand', cursive;
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans: 'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--deep);
+  color: var(--haze);
+  font: 300 16px/1.6 var(--sans);
+}
+
+.wrap {
+  max-width: 980px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.scene {
+  --S: clamp(180px, 26vw, 280px);
+  --lift: 100px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--deep);
+  padding-block: 56px 300px;
+}
+
+/* ---------- Sky ---------- */
+.skybg {
+  position: absolute;
+  inset: 0 0 var(--sea) 0;
+  z-index: 0;
+  background: linear-gradient(180deg, var(--night) 0%, var(--dusk) 26%, var(--violet) 50%, var(--rose) 74%, #ef7a70 90%, var(--honey) 100%);
+}
+.stars { position: absolute; left: 0; right: 0; top: 0; height: 44%; z-index: 0; pointer-events: none; }
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: .25;
+  animation: twinkle var(--d) ease-in-out var(--dl) infinite alternate;
+}
+@keyframes twinkle { from { opacity: .12; transform: scale(.8); } to { opacity: .95; transform: scale(1.25); } }
+
+.cloud {
+  position: absolute;
+  z-index: 1;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 168, 150, .55), rgba(255, 168, 150, 0) 70%);
+  filter: blur(8px);
+  animation: cloud 48s ease-in-out infinite alternate;
+}
+.cloud.c1 { width: 42%; left: 4%; top: 52%; }
+.cloud.c2 { width: 34%; right: 2%; top: 60%; animation-duration: 62s; animation-direction: alternate-reverse; }
+.cloud.c3 { width: 28%; left: 38%; top: 66%; animation-duration: 55s; }
+@keyframes cloud { from { transform: translateX(-5%); } to { transform: translateX(7%); } }
+
+.sun {
+  position: absolute;
+  z-index: 1;
+  left: 64%;
+  margin-left: calc(var(--S) * -.5);
+  width: var(--S);
+  aspect-ratio: 1;
+  bottom: calc(var(--sea) - var(--S) * .5 + var(--lift));
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff3d0 0%, #ffd27a 45%, #ff9a5c 100%);
+  box-shadow: 0 0 120px 50px rgba(255, 160, 100, .45);
+}
+
+.birds { position: absolute; left: 0; right: 0; top: 0; height: 46%; z-index: 3; pointer-events: none; }
+.bird { position: absolute; left: 0; top: var(--t); animation: fly var(--dur) linear var(--dl) infinite; }
+@keyframes fly { from { transform: translateX(-12vw); } to { transform: translateX(112vw); } }
+.bird svg {
+  display: block;
+  fill: none;
+  stroke: rgba(18, 8, 42, .75);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transform-origin: 50% 70%;
+  animation: flap .8s ease-in-out infinite alternate;
+}
+@keyframes flap { to { transform: scaleY(.5); } }
+
+/* ---------- Sea ---------- */
+.sea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--sea);
+  z-index: 2;
+  background: linear-gradient(180deg, #ffb07a 0%, #d9707a 6%, #3a8393 30%, var(--teal) 55%, var(--deep) 100%);
+}
+.sea::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fff0c8 25%, #fff0c8 75%, transparent);
+  box-shadow: 0 0 14px 1px rgba(255, 230, 170, .7);
+}
+.glint {
+  position: absolute;
+  left: 64%;
+  margin-left: calc(var(--S) * -.5);
+  bottom: 0;
+  width: var(--S);
+  height: var(--sea);
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgba(255, 233, 170, .8) 0 2px, transparent 2px 10px);
+  clip-path: polygon(24% 0, 76% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 94%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 94%);
+  animation: shimmer 6s ease-in-out infinite;
+}
+@keyframes shimmer { 0%, 100% { opacity: .5; } 50% { opacity: .95; } }
+
+/* ---------- Lanterns ---------- */
+.sky { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.lantern {
+  position: absolute;
+  left: var(--x);
+  bottom: -100px;
+  width: calc(34px * var(--s));
+  height: calc(42px * var(--s));
+  filter: blur(var(--blur));
+  opacity: 0;
+  animation: rise var(--dur) linear var(--delay) both;
+  will-change: transform;
+}
+@keyframes rise {
+  0% { transform: translateY(0); opacity: 0; }
+  5% { opacity: var(--op); }
+  88% { opacity: var(--op); }
+  100% { transform: translateY(calc(var(--rise) * -1)); opacity: 0; }
+}
+.lantern::before {
+  content: "";
+  position: absolute;
+  inset: -120%;
+  background: radial-gradient(circle, rgba(255, 176, 84, .55) 0%, rgba(255, 150, 60, .18) 38%, transparent 62%);
+  animation: flicker 2.6s ease-in-out infinite alternate;
+}
+@keyframes flicker { from { opacity: .7; } to { opacity: 1; } }
+.lantern .body {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(16% 0, 84% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, #ffd98a 0%, #ffa94a 50%, #c85a28 100%);
+  transform-origin: 50% 0;
+  animation: swing var(--sw) ease-in-out infinite alternate;
+}
+.lantern .body::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 9%; background: #8a3d1c; }
+.lantern .body::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  width: 28%;
+  height: 38%;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(ellipse at 50% 70%, #fffbe6 0%, #ffe9a8 55%, transparent 100%);
+}
+@keyframes swing { from { transform: rotate(-5deg) translateX(-5px); } to { transform: rotate(5deg) translateX(5px); } }
+
+/* ---------- Palms ---------- */
+.palm {
+  position: absolute;
+  bottom: 118px;
+  z-index: 5;
+  overflow: visible;
+  height: clamp(200px, 32vw, 400px);
+  width: auto;
+  aspect-ratio: 240 / 330;
+  fill: var(--palm);
+  stroke: var(--palm);
+  pointer-events: none;
+}
+.palm.l { left: 3%; }
+.palm.r { right: 0; transform: scaleX(-1); }
+.fr {
+  transform-origin: 0 0;
+  transform: rotate(var(--a));
+  animation: fsway var(--d) ease-in-out var(--dl) infinite alternate;
+}
+@keyframes fsway {
+  from { transform: rotate(calc(var(--a) - 3.5deg)); }
+  to { transform: rotate(calc(var(--a) + 3.5deg)); }
+}
+
+/* ---------- Content ---------- */
+.content { position: relative; z-index: 5; text-align: center; }
+
+h1 {
+  margin: 0;
+  padding-bottom: .12em;
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(2.9rem, 9vw, 5.6rem);
+  line-height: 1.12;
+  color: var(--gold);
+  text-wrap: balance;
+  animation: breathe 5s ease-in-out infinite alternate;
+}
+@keyframes breathe {
+  from { text-shadow: 0 0 14px rgba(255, 170, 60, .35); }
+  to { text-shadow: 0 0 34px rgba(255, 170, 60, .8), 0 0 4px rgba(255, 220, 150, .6); }
+}
+.sub {
+  margin: 18px auto 0;
+  max-width: 22rem;
+  font-size: 1.08rem;
+  color: var(--haze);
+  text-wrap: balance;
+}
+
+.card {
+  margin: 34px auto 0;
+  max-width: 46rem;
+  padding: 34px 20px 24px;
+  background: rgba(14, 10, 46, .62);
+  border: 1px solid rgba(255, 199, 102, .3);
+  border-radius: 36px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: enter .9s ease-out both;
+}
+@keyframes enter { from { opacity: .55; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.clock {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clock li { min-width: 0; }
+.num {
+  display: block;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.5rem, 10.5vw, 4.8rem);
+  line-height: 1;
+  color: var(--cream);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.num.tick { animation: tick .45s ease-out; }
+@keyframes tick { from { opacity: .2; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.lbl {
+  display: block;
+  margin-top: 8px;
+  font-size: .7rem;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: rgba(224, 214, 242, .88);
+}
+
+.track {
+  position: relative;
+  height: 6px;
+  margin: 26px 8px 0;
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, .12);
+}
+.fill {
+  position: relative;
+  display: block;
+  height: 100%;
+  min-width: 8px;
+  width: 0;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #ff9a5c, var(--gold), #ffe9a8);
+  overflow: hidden;
+  transition: width 1s linear;
+}
+.fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .7), transparent);
+  transform: translateX(-100%);
+  animation: sheen 3.2s ease-in-out infinite;
+}
+@keyframes sheen { to { transform: translateX(100%); } }
+.nights { margin: 16px 0 0; font-size: .92rem; letter-spacing: .06em; color: var(--haze); }
+
+.date {
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 199, 102, .2);
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  color: var(--cream);
+}
+.date b { font-weight: 500; color: var(--gold); }
+
+.btn {
+  margin-top: 26px;
+  font: 400 1rem var(--sans);
+  letter-spacing: .04em;
+  color: #2a1442;
+  background: linear-gradient(180deg, #ffe08a, #ffb347);
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 28px rgba(255, 179, 71, .4);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(255, 179, 71, .6); }
+.btn:active { transform: scale(.97); }
+.btn:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+
+/* ---------- Shore ---------- */
+.shore { position: absolute; left: 0; right: 0; bottom: 0; height: 170px; z-index: 6; pointer-events: none; overflow: hidden; }
+.foam { position: absolute; left: 0; right: 0; height: 36px; overflow: hidden; }
+.foam svg { display: block; width: 200%; height: 100%; animation: drift linear infinite; }
+.foam.f1 { bottom: 82px; opacity: .55; animation: bob 6s ease-in-out infinite alternate; }
+.foam.f1 svg { fill: #fff3dc; animation-duration: 20s; }
+.foam.f2 { bottom: 76px; animation: bob 4.5s ease-in-out -2s infinite alternate; }
+.foam.f2 svg { fill: #fff8eb; animation-duration: 13s; animation-direction: reverse; }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes bob { from { transform: translateY(3px); } to { transform: translateY(-5px); } }
+
+.sand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 92px;
+  background: linear-gradient(180deg, var(--sand) 0%, #e6bd88 55%, var(--sand2) 100%);
+}
+.mound {
+  position: absolute;
+  bottom: -30px;
+  width: 42%;
+  height: 170px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: linear-gradient(180deg, #f0cd96 0%, var(--sand2) 100%);
+}
+.mound.l { left: -12%; }
+.mound.r { right: -12%; }
+
+@media (max-width: 640px) {
+  .scene { padding-block: 44px 290px; --lift: 80px; }
+  .card { padding: 26px 8px 20px; border-radius: 28px; }
+  .palm { height: 190px; }
+  .palm.l { left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern { animation: none; bottom: auto; top: var(--top); opacity: var(--op); }
+  .lantern .body, .lantern::before, .fr, .star, .cloud, .bird, .bird svg, .foam, .foam svg, .glint, .fill::after, h1, .card, .num.tick { animation: none; }
+  .bird { left: var(--bx); }
+  .btn, .fill { transition: none; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="fp" d="M0 18 q90 -16 180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 t180 0 L2880 36 L0 36 Z"/>
+  </defs>
+</svg>
+
+<main>
+  <section class="scene" id="scene">
+    <div class="skybg"></div>
+    <div class="stars" id="stars" aria-hidden="true"></div>
+    <div class="cloud c1" aria-hidden="true"></div>
+    <div class="cloud c2" aria-hidden="true"></div>
+    <div class="cloud c3" aria-hidden="true"></div>
+    <div class="sun" aria-hidden="true"></div>
+    <div class="birds" id="birds" aria-hidden="true"></div>
+    <div class="sea" aria-hidden="true"></div>
+    <div class="glint" aria-hidden="true"></div>
+    <div class="sky" id="sky" aria-hidden="true"></div>
+    <svg class="palm l" id="palmL" viewBox="-10 0 240 330" aria-hidden="true"></svg>
+    <svg class="palm r" id="palmR" viewBox="-10 0 240 330" aria-hidden="true"></svg>
+
+    <div class="wrap content">
+      <h1 id="headline">A birthday is coming ashore</h1>
+      <p class="sub" id="sub">The beach will glow at sunset on 1 December.</p>
+
+      <div class="card">
+        <ul class="clock" id="timer" role="timer" aria-label="Time left until the birthday">
+          <li><span class="num" id="d">12</span><span class="lbl">Days</span></li>
+          <li><span class="num" id="h">23</span><span class="lbl">Hours</span></li>
+          <li><span class="num" id="m">00</span><span class="lbl">Minutes</span></li>
+          <li><span class="num" id="s">00</span><span class="lbl">Seconds</span></li>
+        </ul>
+        <div class="track" aria-hidden="true"><span class="fill" id="fill"></span></div>
+        <p class="nights" id="nights">13 sunsets to go</p>
+        <p class="date" id="date"><b>1 December 2026</b> &middot; <span>Tuesday</span></p>
+      </div>
+
+      <button class="btn" id="release" type="button">Release more lanterns</button>
+    </div>
+
+    <div class="shore" aria-hidden="true">
+      <div class="foam f1"><svg viewBox="0 0 2880 36" preserveAspectRatio="none"><use href="#fp"/></svg></div>
+      <div class="foam f2"><svg viewBox="0 0 2880 36" preserveAspectRatio="none"><use href="#fp"/></svg></div>
+      <div class="sand"></div>
+      <div class="mound l"></div>
+      <div class="mound r"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var pad = function (n) { return String(n).padStart(2, '0'); };
+  var rand = function (a, b) { return a + Math.random() * (b - a); };
+  var DAY = 864e5, WINDOW = 13, MAX = 46, LIFT = 100;
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (window.matchMedia && window.matchMedia('(max-width: 640px)').matches) LIFT = 80;
+  var scene = $('scene'), sky = $('sky');
+
+  // stars
+  var starsEl = $('stars');
+  for (var i = 0; i < 60; i++) {
+    var st = document.createElement('i');
+    var sz = rand(1, 2.4).toFixed(1) + 'px';
+    st.className = 'star';
+    st.style.left = rand(0, 100).toFixed(1) + '%';
+    st.style.top = rand(0, 100).toFixed(1) + '%';
+    st.style.width = sz;
+    st.style.height = sz;
+    st.style.setProperty('--d', rand(2.5, 6).toFixed(1) + 's');
+    st.style.setProperty('--dl', (-rand(0, 6)).toFixed(1) + 's');
+    starsEl.appendChild(st);
+  }
+
+  // birds
+  var birdsEl = $('birds');
+  for (var b = 0; b < 5; b++) {
+    var bd = document.createElement('div');
+    var w = rand(20, 34);
+    bd.className = 'bird';
+    bd.style.setProperty('--t', rand(12, 78).toFixed(0) + '%');
+    bd.style.setProperty('--dur', rand(38, 70).toFixed(0) + 's');
+    bd.style.setProperty('--dl', (-rand(0, 60)).toFixed(0) + 's');
+    bd.style.setProperty('--bx', rand(8, 85).toFixed(0) + '%');
+    bd.innerHTML = '<svg viewBox="0 0 28 12" width="' + w.toFixed(0) + '" height="' + (w * 12 / 28).toFixed(0) + '"><path d="M0 7 Q7 -1 14 7 Q21 -1 28 7"/></svg>';
+    birdsEl.appendChild(bd);
+  }
+
+  // palms
+  function buildPalm(svg) {
+    var ns = 'http://www.w3.org/2000/svg';
+    var trunk = document.createElementNS(ns, 'path');
+    trunk.setAttribute('d', 'M108 330 C 100 250, 122 182, 112 120');
+    trunk.setAttribute('fill', 'none');
+    trunk.setAttribute('stroke-width', '9');
+    trunk.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(trunk);
+    var g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', 'translate(112 120)');
+    g.setAttribute('stroke', 'none');
+    [140, 170, 205, 245, 285, 325, 10, 40, 70].forEach(function (a) {
+      var p = document.createElementNS(ns, 'path');
+      p.setAttribute('d', 'M0 0 C34 -38 86 -40 118 -4 C86 -20 36 -18 0 0Z');
+      p.setAttribute('class', 'fr');
+      p.style.setProperty('--a', a + 'deg');
+      p.style.setProperty('--d', rand(3, 5.5).toFixed(1) + 's');
+      p.style.setProperty('--dl', (-rand(0, 5)).toFixed(1) + 's');
+      g.appendChild(p);
+    });
+    svg.appendChild(g);
+  }
+  buildPalm($('palmL'));
+  buildPalm($('palmR'));
+
+  // lanterns
+  var count = 0;
+  function spawn(opts) {
+    opts = opts || {};
+    if (count >= MAX) return;
+    var depth = Math.random();
+    var dur = rand(26, 44) * (1.15 - depth * .35);
+    var el = document.createElement('div');
+    el.className = 'lantern';
+    el.style.setProperty('--x', rand(2, 96).toFixed(1) + '%');
+    el.style.setProperty('--s', (.55 + depth * .95).toFixed(2));
+    el.style.setProperty('--blur', ((1 - depth) * 3.2).toFixed(1) + 'px');
+    el.style.setProperty('--dur', dur.toFixed(1) + 's');
+    el.style.setProperty('--delay', (opts.initial ? -rand(0, dur) : (opts.delay || 0)).toFixed(2) + 's');
+    el.style.setProperty('--sw', rand(3.5, 6).toFixed(1) + 's');
+    el.style.setProperty('--rise', (scene.offsetHeight + 220) + 'px');
+    el.style.setProperty('--top', rand(8, 62).toFixed(0) + '%');
+    el.style.setProperty('--op', (.5 + depth * .5).toFixed(2));
+    el.innerHTML = '<i class="body"></i>';
+    sky.appendChild(el);
+    count++;
+    if (!reduce) {
+      el.addEventListener('animationend', function (e) {
+        if (e.animationName !== 'rise') return;
+        el.remove();
+        count--;
+        if (opts.keep) spawn({ keep: true, delay: rand(0, 3) });
+      });
+    }
+  }
+  for (var k = 0; k < 14; k++) spawn({ initial: true, keep: true });
+
+  $('release').addEventListener('click', function () {
+    for (var j = 0; j < 7; j++) spawn({ delay: j * 0.18 });
+  });
+
+  // countdown
+  function pickTarget(now) {
+    var y = now.getFullYear();
+    var t = new Date(y, 11, 1);
+    var end = new Date(y, 11, 2);
+    if (now >= end) return { t: new Date(y + 1, 11, 1), party: false };
+    return { t: t, party: now >= t };
+  }
+  var prev = {};
+  function setNum(id, val) {
+    if (prev[id] === val) return;
+    prev[id] = val;
+    var el = $(id);
+    el.textContent = val;
+    if (!reduce) { el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+  }
+
+  function render() {
+    var now = new Date();
+    var pt = pickTarget(now);
+    var diff = pt.party ? 0 : pt.t - now;
+    setNum('d', String(Math.floor(diff / DAY)));
+    setNum('h', pad(Math.floor((diff % DAY) / 36e5)));
+    setNum('m', pad(Math.floor((diff % 36e5) / 6e4)));
+    setNum('s', pad(Math.floor((diff % 6e4) / 1e3)));
+
+    var sunsets = pt.party ? 0 : Math.ceil(diff / DAY);
+    $('nights').textContent = pt.party ? 'Tonight the beach is full of light' : (sunsets === 1 ? '1 sunset to go' : sunsets + ' sunsets to go');
+    $('headline').textContent = pt.party ? 'Happy birthday!' : 'A birthday is coming ashore';
+    $('sub').textContent = pt.party
+      ? 'Make a wish and let the lanterns go.'
+      : 'The beach will glow at sunset on ' + pt.t.toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) + '.';
+
+    var dateEl = $('date');
+    dateEl.textContent = '';
+    var bEl = document.createElement('b');
+    bEl.textContent = pt.t.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+    dateEl.appendChild(bEl);
+    dateEl.appendChild(document.createTextNode(' · ' + pt.t.toLocaleDateString(undefined, { weekday: 'long' })));
+
+    var progress = Math.min(1, Math.max(0, 1 - diff / (WINDOW * DAY)));
+    $('fill').style.width = (progress * 100).toFixed(2) + '%';
+    // the sun sinks toward the horizon as the date gets closer
+    scene.style.setProperty('--lift', ((1 - progress) * LIFT).toFixed(1) + 'px');
+
+    if (pt.party && !reduce && now.getSeconds() % 3 === 0) { spawn({}); spawn({ delay: .4 }); }
+  }
+
+  document.addEventListener('visibilitychange', render);
+  render();
+  setInterval(render, 1000);
+})();
+</script>
